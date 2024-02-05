@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "there_is_no_course"
+version = "0.1.0"
+description = "This is not a training course in how to become an awesome Python programmer."
+authors = ["alimanfoo"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "there_is_no_course"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.31.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
