@@ -61,7 +61,7 @@ def render_intro():
         If you get them wrong, you will be cast into the Gorge of Eternal 
         Peril.
 
-        <a href="/?question=1" target="_self">Let's do this! &gt;&gt;&gt;</a>
+        <a href="/?question=1" rel="next" target="_self">Let's do this! &gt;&gt;&gt;</a>
     """,
         unsafe_allow_html=True,
     )
