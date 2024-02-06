@@ -15,7 +15,7 @@ I'm just going to get back to work, if that's OK?
 (Time passes.)
 
 Look, I'm telling you, there is no course!
-No more videos!
+No lessons, no videos!
 Oh, and whatever you do, don't push the big red button.
 Bad things will happen.
 You have been warned.

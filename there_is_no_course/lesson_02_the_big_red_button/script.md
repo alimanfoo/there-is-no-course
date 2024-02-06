@@ -29,7 +29,6 @@ Who wrote this program?
 Oh wait, that was me.
 Haha, sorry, that was another joke.
 Seriously, there is no course.
-No more videos.
 
 Tell you what though.
 I have written a little game you might like to play.
