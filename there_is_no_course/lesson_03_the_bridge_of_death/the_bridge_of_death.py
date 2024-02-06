@@ -51,8 +51,8 @@ def render_header():
 def render_intro():
     st.markdown(
         """
-        Are you on a quest to become an Awesome Python Programmer?
-        Then step forward, brave knight!
+        **Are you on a quest to become an Awesome Python Programmer?
+        Then step forward, brave knight!**
 
         Stop! 
         Who would cross the Bridge of Death must answer me these questions
@@ -61,7 +61,7 @@ def render_intro():
         If you get them wrong, you will be cast into the Gorge of Eternal 
         Peril.
 
-        <a href="?question=1" target="_self">Let's do this! &gt;&gt;&gt;</a>
+        <a href="/?question=1" target="_self">Let's do this! &gt;&gt;&gt;</a>
     """,
         unsafe_allow_html=True,
     )
