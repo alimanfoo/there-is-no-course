@@ -14,6 +14,7 @@ def render():
     # easter egg question which the player can find by hacking
     # the URL.
     question = st.query_params.get("question", "intro")
+    st.query_params["question"] = question
     if question == "intro":
         render_intro()
     elif question == "1":
@@ -61,7 +62,7 @@ def render_intro():
         If you get them wrong, you will be cast into the Gorge of Eternal 
         Peril.
 
-        <a href="/?question=1" rel="next" target="_top">Let's do this! &gt;&gt;&gt;</a>
+        <a href="?question=1" rel="next" target="_self">Let's do this! &gt;&gt;&gt;</a>
     """,
         unsafe_allow_html=True,
     )
@@ -95,7 +96,7 @@ def render_question_one():
             if answer.lower() in correct_answers:
                 st.markdown(
                     """
-                    Correct! <a href="?question=2" target="_self">Next question &gt;&gt;&gt;</a>
+                    Correct! <a href="?question=2" rel="next" target="_self">Next question &gt;&gt;&gt;</a>
                 """,
                     unsafe_allow_html=True,
                 )
@@ -141,7 +142,7 @@ def render_question_two():
                 # Deliberately skip over question 3, that is the easter egg.
                 st.markdown(
                     """
-                    Correct! <a href="?question=4" target="_self">Next question &gt;&gt;&gt;</a>
+                    Correct! <a href="?question=4" rel="next" target="_self">Next question &gt;&gt;&gt;</a>
                 """,
                     unsafe_allow_html=True,
                 )
@@ -221,7 +222,7 @@ def render_question_four():
             if answer.lower() in correct_answers:
                 st.markdown(
                     """
-                    Correct! <a href="?question=offyougo" target="_self">Off you go &gt;&gt;&gt;</a>
+                    Correct! <a href="?question=offyougo" rel="next" target="_self">Off you go &gt;&gt;&gt;</a>
                 """,
                     unsafe_allow_html=True,
                 )
@@ -281,7 +282,7 @@ def render_question_three():
 
                     (Well done! You have cast the bridgekeeper into the Gorge of Eternal Peril.)
                     
-                    <a href="?question=offyougo" target="_self">Off you go &gt;&gt;&gt;</a>
+                    <a href="?question=offyougo" rel="next" target="_self">Off you go &gt;&gt;&gt;</a>
                 """,
                     unsafe_allow_html=True,
                 )
@@ -303,7 +304,7 @@ def render_success():
     st.markdown("But the quest continues...")
     st.markdown("TODO link to next video.")
     st.markdown(
-        "(Or you can <a href='?question=intro'>play again</a> if you like, just for fun.)",
+        "(Or you can <a href='?question=intro' target='_self'>play again</a> if you like, just for fun.)",
         unsafe_allow_html=True,
     )
 
