@@ -1,3 +1,4 @@
+from pathlib import Path
 import streamlit as st
 
 # To save on some typing, import the session state as a variable
@@ -6,6 +7,8 @@ from streamlit import session_state as session
 
 
 def render():
+    """Main UI rendering function."""
+
     init_session()
     render_header()
 
@@ -127,7 +130,7 @@ def render_question_one():
 
     # Obtain session variables.
     tries = session.question_one_tries
-    answer = session.question_one_answer.lower()
+    answer = session.question_one_answer.lower().strip()
     correct = answer in correct_answers
 
     # Render initial content.
@@ -180,7 +183,7 @@ def render_question_two():
 
     # Obtain session variables.
     tries = session.question_two_tries
-    answer = session.question_two_answer.lower()
+    answer = session.question_two_answer.lower().strip()
     correct = answer in correct_answers
 
     # Render initial content.
@@ -214,6 +217,9 @@ def render_question_two():
 
 
 def render_question_three():
+    """This is an easter egg question, can only be found by hacking
+    URL query parameters."""
+
     # Set up question.
     hints = [
         "Did you watch the video?",
@@ -235,7 +241,7 @@ def render_question_three():
 
     # Obtain session variables.
     tries = session.question_three_tries
-    answer = session.question_three_answer.lower()
+    answer = session.question_three_answer.lower().strip()
     # Be kind to the player, don't require a question mark.
     if answer and answer[-1] != "?":
         answer += "?"
@@ -254,6 +260,8 @@ def render_question_three():
 
     if correct:
         # Answer is correct, render link to success.
+        path = Path(__file__).parent / "bridgekeeper_stumped.jpg"
+        st.image(path.as_posix())
         st.markdown(
             """
             Huh? I-- I don't know that. 
@@ -336,8 +344,8 @@ def render_question_four():
     ]
 
     # Obtain session variables.
-    tries = session.question_one_tries
-    answer = session.question_one_answer.lower()
+    tries = session.question_four_tries
+    answer = session.question_four_answer.lower().strip()
     correct = answer in correct_answers
     smart = answer in smart_answers
 
@@ -362,32 +370,48 @@ def render_question_four():
         # This is a bit of fun, attempt to catch out any
         # smartypants people out there who already know a
         # lot about Python.
-        raise SmartyPantsError
+        raise SmartyPantsError("Think you're clever, eh?")
 
     if tries > len(hints):
         # Answer is not correct, and there are no more hints.
         render_death()
         return
 
-    with st.form(key="question_one_form"):
-        st.text_input(label="``>>>``", key="question_one_answer")
-        st.form_submit_button(label="Submit", on_click=submit_question_one)
+    with st.form(key="question_four_form"):
+        st.text_input(label="``>>>``", key="question_four_answer")
+        st.form_submit_button(label="Submit", on_click=submit_question_four)
         if tries > 0:
             st.markdown(hints[tries - 1])
 
 
 def render_success():
-    st.markdown("## 🐍🐍🐍 Congratulations! 🐍🐍🐍")
-    st.markdown("You have crossed the bridge of doom.")
-    st.markdown("But the quest continues...")
-    st.markdown("TODO link to next video.")
-    st.markdown(
-        "(Or you can <a href='?question=intro' target='_self'>play again</a> if you like, just for fun.)",
-        unsafe_allow_html=True,
+    st.markdown("## Congratulations!")
+    st.markdown("🐍🐍🐍🐍🐍🐍")
+    st.markdown("You have passed the test and crossed the Bridge of Death.")
+    st.markdown("Here is your reward...")
+
+    # Final bit of fun, raise an exception and hide the next
+    # video URL in the error message.
+    i_am_a_lumberjack_error = RuntimeError(
+        """
+        Something unexpected has happened.
+        It's probably a bug.
+        I'm not maintaining this code any more, sorry.
+        Here's a nice video about trees instead, to make you feel better...
+        TODO URL
+    """
     )
+    raise i_am_a_lumberjack_error
+
+    # st.markdown(
+    #     "(Or <a href='?question=intro' target='_self'>play again</a> if you like, just for fun.)",
+    #     unsafe_allow_html=True,
+    # )
 
 
 def render_bad_query_param():
+    path = Path(__file__).parent / "bridgekeeper.webp"
+    st.image(path.as_posix())
     st.markdown(
         """
         What do you think you are doing, hacking around with my URL 
