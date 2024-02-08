@@ -27,7 +27,7 @@ Oh wait, and there's an error message:
 That's a terrible error message.
 Who wrote this program?
 Oh wait, that was me.
-Haha, sorry, that was another joke.
+Sorry, that was another joke.
 Seriously, there is no course.
 
 Tell you what though.
