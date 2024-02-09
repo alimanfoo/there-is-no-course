@@ -1,16 +1,52 @@
+from pathlib import Path
+
 import streamlit as st
 from streamlit import session_state as session
 
 
-def on_input():
-    history = session["history"]
-    next_input = session["prompt"]
-    next_output = [
+def menu():
+    audio_path = Path(__file__).parent / "audio" / "menu.ogg"
+    output = [
+        dict(function="markdown", body="TODO menu"),
         dict(
-            function="markdown",
-            body=next_input,
+            function="audio",
+            data=audio_path.as_posix(),
+            format="audio/ogg",
         ),
     ]
+    return output
+
+
+def vikings():
+    audio_path = Path(__file__).parent / "audio" / "vikings.ogg"
+    output = [
+        dict(
+            function="audio",
+            data=audio_path.as_posix(),
+            format="audio/ogg",
+        ),
+    ]
+    return output
+
+
+def on_input():
+    history = session["history"]
+    next_input = session["prompt"].strip()
+
+    if next_input == "menu()":
+        next_output = menu()
+
+    elif next_input == "vikings()":
+        next_output = vikings()
+
+    else:
+        next_output = [
+            dict(
+                function="markdown",
+                body="Sorry, I didn't understand that.",
+            ),
+        ]
+
     next_item = dict(
         input=next_input,
         output=next_output,
@@ -26,6 +62,9 @@ session.setdefault("prompt", "")
 history = session["history"]
 
 st.title("The Green Midget Café")
+
+# path = Path(__file__).parent / "audio" / "spam-skit.ogg"
+# st.audio(path.as_posix(), format="audio/ogg")
 
 for item in history:
     input = item["input"]
