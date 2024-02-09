@@ -386,9 +386,9 @@ def render_question_four():
 
 def render_success():
     st.markdown("## Congratulations!")
-    st.markdown("🐍🐍🐍🐍🐍🐍")
     st.markdown("You have passed the test and crossed the Bridge of Death.")
     st.markdown("Here is your reward...")
+    st.markdown("🐍🐍🐍🐍🐍🐍")
 
     # Final bit of fun, raise an exception and hide the next
     # video URL in the error message.
