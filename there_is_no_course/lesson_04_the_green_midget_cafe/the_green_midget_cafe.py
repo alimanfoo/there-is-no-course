@@ -5,29 +5,41 @@ from streamlit import session_state as session
 
 
 menu_items = [
-    "egg and bacon",
-    "egg sausage and bacon",
-    "egg and spam",
-    "egg bacon and spam",
-    "egg bacon sausage and spam",
-    "spam bacon sausage and spam",
-    "spam egg spam spam bacon and spam",
-    "spam sausage spam spam spam bacon spam tomato and spam",
-    "spam spam spam egg and spam",
-    "spam spam spam spam spam spam baked beans spam spam spam and spam",
-    "Lobster Thermidor aux Crevettes with a mornay sauce served in a Provencale manner with shallots and aubergines garnished with truffle pate, brandy and a fried egg on top and spam",
+    "Egg and bacon.",
+    "Egg sausage and bacon.",
+    "Egg and spam.",
+    "Egg bacon and spam.",
+    "Egg bacon sausage and spam.",
+    "Spam bacon sausage and spam.",
+    "Spam egg spam spam bacon and spam.",
+    "Spam sausage spam spam spam bacon spam tomato and spam.",
+    "Spam spam spam egg and spam.",
+    "Spam spam spam spam spam spam baked beans spam spam spam and spam.",
+    "Lobster Thermidor aux crevettes with a mornay sauce served in a Provencale manner with shallots and aubergines garnished with truffle paté, brandy and a fried egg on top and spam.",
 ]
 
 
-def exec_help():
+def exec_help_inside():
     body = """
+        Welcome to the Green Midget Café!
+
         Ask for the ``menu()`` if you'd like to know what we've got.
 
         Say ``order(N)`` to order dish number ``N`` on the menu.
         
         Ignore the ``vikings()``, they're a noisy lot.
 
-        You can ``exit()`` when you're done.
+        You can ``exit()`` whenever you're done.
+    """
+    output = [dict(function="markdown", body=body)]
+    return output
+
+
+def exec_help_outside():
+    body = """
+        Would you like to ``enter()`` the Green Midget Café?
+
+        I hear they do wonderful spam...
     """
     output = [dict(function="markdown", body=body)]
     return output
@@ -63,7 +75,10 @@ def exec_order(item):
     elif "baked beans" in item:
         body = "Baked beans are off."
     else:
-        body = """
+        session["success"] = True
+        body = f"""
+            {item}
+
             An excellent choice! Coming right up...
 
             🐍🐍🐍🐍🐍🐍
@@ -71,6 +86,11 @@ def exec_order(item):
             TODO URL
         """
     output = [dict(function="markdown", body=body)]
+    return output
+
+
+def exec_order_nothing():
+    output = [dict(function="markdown", body="Perhaps you meant to order something?")]
     return output
 
 
@@ -86,17 +106,103 @@ def exec_vikings():
     return output
 
 
+def exec_exit():
+    success = session["success"]
+    session["success"] = False
+    session["inside"] = False
+    if success:
+        output = [
+            dict(function="markdown", body="Thanks for visiting! Come back soon.")
+        ]
+    else:
+        output = [
+            dict(
+                function="markdown",
+                body="Shame you didn't order anything. Maybe some spam next time?",
+            )
+        ]
+    return output
+
+
+def exec_bad_command():
+    output = [
+        dict(
+            function="markdown",
+            body="Sorry, what?",
+        ),
+    ]
+    return output
+
+
+def exec_enter():
+    session["inside"] = True
+    output = [
+        dict(
+            function="markdown",
+            body="Morning! Shout for ``help()`` if you need anything.",
+        ),
+    ]
+    return output
+
+
+def exec_hint_brackets():
+    output = [
+        dict(
+            function="markdown",
+            body="If you want something to happen, you'll need to add a pair of brackets.",
+        ),
+    ]
+    return output
+
+
+def exec_clear():
+    session["history"] = []
+    output = []
+    return output
+
+
 order_regex = re.compile(r"order\(([^)]+)\)")
 
 
 def on_input():
-    history = session["history"]
     input = session["prompt"].strip()
+    inside = session["inside"]
+    if inside:
+        output = on_input_inside()
+    else:
+        output = on_input_outside()
+    history = session["history"]
+    if input != "clear()":
+        item = dict(
+            input=input,
+            output=output,
+        )
+        history.append(item)
+    session["history"] = history
+    session["prompt"] = ""
 
+
+def on_input_outside():
+    input = session["prompt"].strip()
+    if input == "enter()":
+        output = exec_enter()
+    elif input == "clear()":
+        output = exec_clear()
+    elif input == "help()":
+        output = exec_help_outside()
+    elif input in ["enter", "clear", "help"]:
+        output = exec_hint_brackets()
+    else:
+        output = exec_bad_command()
+    return output
+
+
+def on_input_inside():
+    input = session["prompt"].strip()
     order_match = order_regex.match(input)
 
     if input == "help()":
-        output = exec_help()
+        output = exec_help_inside()
 
     elif input == "menu()":
         output = exec_menu()
@@ -116,56 +222,59 @@ def on_input():
             else:
                 output = exec_order(item)
 
-    ## TODO exit()
-    ## TODO hint for order()
-    ## TODO hint if forget parentheses
+    elif input == "exit()":
+        output = exec_exit()
+
+    elif input == "clear()":
+        output = exec_clear()
+
+    elif input == "order()":
+        output = exec_order_nothing()
+
+    elif input in ["help", "menu", "vikings", "exit", "clear", "order"]:
+        output = exec_hint_brackets()
+
     ## TODO mr_bun()
     ## TODO mrs_bun()
     ## TODO lumberjack() -- easter egg
 
     else:
-        output = [
-            dict(
-                function="markdown",
-                body="Sorry, what?",
-            ),
-        ]
+        output = exec_bad_command()
 
-    item = dict(
-        input=input,
-        output=output,
-    )
-    history.append(item)
-    session["history"] = history
-    session["prompt"] = ""
+    return output
 
 
 def init_session():
+    session.setdefault("inside", False)
     session.setdefault("history", [])
     session.setdefault("prompt", "")
+    session.setdefault("success", False)
 
 
 def render():
     init_session()
+    st.title("The Green Midget Café")
+
+    history = session["history"]
+
     st.markdown(
         """
-        # The Green Midget Café
+        Welcome to Bromley! 
 
-        Morning!
-        
-        Shout ``help()`` if you need anything.           
+        Would you like to ``enter()`` the Green Midget Café?
+
+        I hear they do wonderful spam...
     """
     )
 
-    history = session["history"]
     for item in history:
         input = item["input"]
         output = item["output"]
         st.markdown(f"``>>> {input}``")
         for content in output:
             content = content.copy()
-            function = content.pop("function")
-            f = getattr(st, function)
+            function_name = content.pop("function")
+            f = getattr(st, function_name)
             f(**content)
 
     st.text_input(
@@ -174,6 +283,7 @@ def render():
         on_change=on_input,
     )
 
+    # Debug.
     st.divider()
     st.write(session)
 
